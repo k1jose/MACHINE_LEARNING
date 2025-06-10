@@ -1,16 +1,45 @@
-<div>
-    <div>
-        @if (!imageUrl) {
-            <p>Please upload an image</p>
-        }
-        @if (imageUrl) {
-            <div>
-                <img [src]="imageUrl" alt="Subir" class="image">
+<div class="wrapper">
+    <div class="card-container animate-fade-in">
+        <header class="header">
+            <h1 class="title">Detección de Objetos</h1>
+            <p class="subtitle">Sube una imagen y revisa lo que detecta el modelo</p>
+        </header>
+
+        <hr class="divider">
+
+        <main class="main-content">
+            @if (!imageUrl) {
+            <p class="placeholder">Selecciona una imagen para comenzar.</p>
+            }
+
+            @if (imageUrl) {
+            <div class="preview">
+                <img [src]="imageUrl" alt="Preview">
             </div>
-        }
-        <input type="file" (change)="{}" accept="image/*">
-        <button (click)="{}" [disabled]="!selectedFile">
-            {{(imageUrl? 'Image identified': 'Image not uploaded')}}
-        </button>
+            }
+
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" class="file-input">
+
+            <button (click)="onUpload()" [disabled]="!selectedFile || isLoading" class="btn-primary">
+                {{ isLoading ? 'Procesando...' : imageUrl ? 'Analizar Imagen' : 'Subir Imagen' }}
+            </button>
+
+            @if (isLoading) {
+            <div class="loader"></div>
+            }
+
+            @if (detections.length > 0) {
+            <section class="detections animate-fade-in-up">
+                <h2 class="detections-title">Resultados</h2>
+                @for (d of detections; track d.class) {
+                <div class="item-card hoverable">
+                    <p class="item-class">{{ d.class }}</p>
+                    <p class="item-score">{{ (d.score * 100) | number:'1.0-2' }}%</p>
+                </div>
+                }
+            </section>
+            }
+        </main>
     </div>
 </div>
+  
